@@ -1,18 +1,32 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div
+    class="flex flex-col justify-center items-center h-screen w-screen bg-blue-900"
+  >
+    <div>
+      <h1 class="text-8xl mb-4 text-white" style="font-family: 'Gyparody'">
+        Big Picture Jeopardy!
+      </h1>
+
+      <QuestionValuesTable :categories="questions" class="w-200 h-200" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import questions from "../../questions/questions.json";
+import { QuestionCategory } from "@/models";
+import QuestionValuesTable from "@/components/QuestionValuesTable.vue";
 
 @Options({
   components: {
-    HelloWorld
+    QuestionValuesTable
   }
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  questions!: { [key: string]: QuestionCategory };
+  created() {
+    this.questions = questions;
+  }
+}
 </script>
