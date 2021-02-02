@@ -3,6 +3,11 @@
     class="flex flex-col justify-center items-center h-screen w-screen bg-blue-900 relative"
   >
     <div>
+      <ModalPlayerRegistration
+        v-if="showRegistrationModal"
+        @save-players="savePlayers"
+      />
+
       <h1 class="text-8xl mb-4 text-white" style="font-family: 'Gyparody'">
         Big Picture Jeopardy!
       </h1>
@@ -31,10 +36,11 @@
 // https://www.soundboard.com/sb/price_is_right
 import { Options, Vue } from "vue-class-component";
 import questions from "../../questions/questions.json";
-import { QuestionAnswer, QuestionCategory } from "@/models";
+import { Player, QuestionAnswer, QuestionCategory } from "@/models";
 import QuestionValuesTable from "@/components/QuestionValuesTable.vue";
 import ModalQuestion from "@/components/ModalQuestion.vue";
 import ModalAnswer from "@/components/ModalAnswer.vue";
+import ModalPlayerRegistration from "@/components/ModalPlayerRegistration.vue";
 
 type points = "200" | "400" | "800" | "1000";
 
@@ -42,15 +48,18 @@ type points = "200" | "400" | "800" | "1000";
   components: {
     QuestionValuesTable,
     ModalQuestion,
-    ModalAnswer
+    ModalAnswer,
+    ModalPlayerRegistration
   }
 })
 export default class Home extends Vue {
   questions!: { [key: string]: QuestionCategory };
   showQuestionModal = false;
   showAnswerModal = false;
+  showRegistrationModal = true;
   selectedCategory: string | null = null;
   selectedPointsValue: points | null = null;
+  allPlayers: Array<Player> = [];
 
   get selectedQuestionAnswer(): QuestionAnswer | null {
     if (!this.selectedCategory || !this.selectedPointsValue) {
@@ -84,8 +93,14 @@ export default class Home extends Vue {
     this.showAnswerModal = true;
   }
 
+  savePlayers(playersList: Array<Player>) {
+    this.allPlayers = playersList;
+    this.goHome();
+  }
+
   goHome() {
     // cleanup
+    this.showRegistrationModal = false;
     this.showQuestionModal = false;
     this.showAnswerModal = false;
     this.selectedCategory = null;

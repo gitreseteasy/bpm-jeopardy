@@ -11,3 +11,8 @@ export interface QuestionCategory {
   800: QuestionAnswer;
   1000: QuestionAnswer;
 }
+
+export interface Player {
+  name: string;
+  imageUrl: string;
+}

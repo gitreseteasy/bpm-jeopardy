@@ -20,13 +20,13 @@
       >
         <div
           v-if="!pointsValueQuestionAnswer[pointValue].marked"
-          class="flex w-full h-full"
+          class="flex w-full h-full justify-center items-center"
           @click="clickQuestionValue(key, pointValue)"
         >
           {{ pointValue }}
         </div>
         <div v-else>
-          🖕
+          👌
         </div>
       </div>
     </div>
