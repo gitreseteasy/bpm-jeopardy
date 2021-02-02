@@ -1,6 +1,7 @@
 export interface QuestionAnswer {
   question: string;
   answer: string;
+  marked?: boolean;
 }
 
 export interface QuestionCategory {

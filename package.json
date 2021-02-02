@@ -16,6 +16,7 @@
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
+    "vue-js-modal": "^2.0.0-rc.6",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },
