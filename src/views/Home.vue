@@ -31,7 +31,7 @@
     <ModalAnswer
       v-if="selectedQuestionAnswer && showAnswerModal"
       :question-answer="selectedQuestionAnswer"
-      @go-home="goHome"
+      @set-answer="setAnswer"
     />
 
     <ModalQuestion
@@ -72,6 +72,7 @@ export default class Home extends Vue {
   selectedCategory: string | null = null;
   selectedPointsValue: points | null = null;
   allPlayers: Array<Player> = [];
+  currentPlayer = 0;
 
   get selectedQuestionAnswer(): QuestionAnswer | null {
     if (!this.selectedCategory || !this.selectedPointsValue) {
@@ -117,6 +118,17 @@ export default class Home extends Vue {
     this.showAnswerModal = false;
     this.selectedCategory = null;
     this.selectedPointsValue = null;
+  }
+
+  setAnswer(answer: string) {
+    const pointsValue = Number(this.selectedPointsValue);
+    if (answer === "correct") {
+      this.allPlayers[this.currentPlayer].points += pointsValue;
+    } else {
+      this.allPlayers[this.currentPlayer].points -= pointsValue;
+    }
+    // this.incrementPlayer
+    this.goHome();
   }
 }
 </script>
