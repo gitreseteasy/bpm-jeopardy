@@ -8,14 +8,14 @@
     <div class="text-white">{{ player.name }}</div>
 
     <div
-      class="rounded-2xl text-4xl p-2"
+      class="rounded-2xl text-4xl p-2 w-28 flex justify-center items-center"
       :class="{
-        'bg-red-900 text-white': false,
-        'bg-green-700 text-white': true,
-        'bg-white text-black': false
+        'bg-red-900 text-white': player.points < 0,
+        'bg-green-700 text-white': player.points > 0,
+        'bg-white text-black': player.points === 0
       }"
     >
-      200
+      {{ player.points }}
     </div>
   </div>
 </template>

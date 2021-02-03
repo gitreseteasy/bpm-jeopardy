@@ -7,13 +7,13 @@
         Big Picture Jeopardy!
       </h1>
 
-      <div class="space-y-8">
+      <div class="space-y-8 flex flex-col items-center">
         <QuestionValuesTable
           :categories="questions"
           @select-question="selectQuestion"
         />
 
-        <div class="flex space-x-2 text-3xl">
+        <div class="flex space-x-4 text-3xl">
           <PlayerPointsSquare
             v-for="(player, index) in allPlayers"
             :key="index"

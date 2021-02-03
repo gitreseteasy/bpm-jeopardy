@@ -15,4 +15,5 @@ export interface QuestionCategory {
 export interface Player {
   name: string;
   imageUrl: string;
+  points: number;
 }

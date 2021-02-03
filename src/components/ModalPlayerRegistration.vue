@@ -46,12 +46,12 @@ import PlayerDisplayDetailsCard from "@/components/PlayerDisplayDetailsCard.vue"
 })
 export default class ModalPlayerRegistration extends Vue {
   playersList: Array<Player> = [];
-  currentPlayer: Player = { name: "", imageUrl: "" };
+  currentPlayer: Player = { name: "", imageUrl: "", points: 0 };
 
   addCurrentPlayer() {
     if (this.currentPlayer.name && this.currentPlayer.imageUrl) {
       this.playersList.push({ ...this.currentPlayer });
-      this.currentPlayer = { name: "", imageUrl: "" };
+      this.currentPlayer = { name: "", imageUrl: "", points: 0 };
     }
   }
 }
