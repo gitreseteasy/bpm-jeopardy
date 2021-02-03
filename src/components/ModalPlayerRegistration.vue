@@ -4,29 +4,16 @@
       class="flex flex-col w-full h-full justify-center items-center space-y-20"
     >
       <div class="p-8">
-        <div
+        <PlayerDisplayDetailsCard
           v-for="(player, index) in playersList"
           :key="index"
-          class="rounded border mb-2 bg-white p-4"
-        >
-          <div>name: {{ player.name }}</div>
-          <div>imageUrl: {{ player.imageUrl }}</div>
-        </div>
+          :player="player"
+        />
 
-        <div class="bg-white space-y-2 mb-2 rounded p-4">
-          <div>
-            Name:
-            <input
-              v-model="currentPlayer.name"
-              class="border rounded"
-              @keyup="pressEnter"
-            />
-          </div>
-          <div>
-            Image:
-            <input v-model="currentPlayer.imageUrl" class="border rounded" />
-          </div>
-        </div>
+        <PlayerEnterDetailsCard
+          :current-player="currentPlayer"
+          @submit-player-details="addCurrentPlayer"
+        />
         <button
           class="border bg-blue-900 rounded text-white font-semibold p-2"
           @click="addCurrentPlayer"
@@ -47,8 +34,14 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 import { Player } from "@/models";
+import PlayerEnterDetailsCard from "@/components/PlayerEnterDetailsCard.vue";
+import PlayerDisplayDetailsCard from "@/components/PlayerDisplayDetailsCard.vue";
 
 @Options({
+  components: {
+    PlayerEnterDetailsCard,
+    PlayerDisplayDetailsCard
+  },
   emits: ["save-players"]
 })
 export default class ModalPlayerRegistration extends Vue {
@@ -56,13 +49,9 @@ export default class ModalPlayerRegistration extends Vue {
   currentPlayer: Player = { name: "", imageUrl: "" };
 
   addCurrentPlayer() {
-    this.playersList.push({ ...this.currentPlayer });
-    this.currentPlayer = { name: "", imageUrl: "" };
-  }
-
-  pressEnter(event: KeyboardEvent) {
-    if (event.key === "Enter") {
-      this.addCurrentPlayer();
+    if (this.currentPlayer.name) {
+      this.playersList.push({ ...this.currentPlayer });
+      this.currentPlayer = { name: "", imageUrl: "" };
     }
   }
 }
