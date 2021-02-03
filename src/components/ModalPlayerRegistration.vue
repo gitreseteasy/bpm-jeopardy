@@ -49,7 +49,7 @@ export default class ModalPlayerRegistration extends Vue {
   currentPlayer: Player = { name: "", imageUrl: "" };
 
   addCurrentPlayer() {
-    if (this.currentPlayer.name) {
+    if (this.currentPlayer.name && this.currentPlayer.imageUrl) {
       this.playersList.push({ ...this.currentPlayer });
       this.currentPlayer = { name: "", imageUrl: "" };
     }

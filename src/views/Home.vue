@@ -3,20 +3,30 @@
     class="flex flex-col justify-center items-center h-screen w-screen bg-blue-900 relative"
   >
     <div>
-      <ModalPlayerRegistration
-        v-if="showRegistrationModal"
-        @save-players="savePlayers"
-      />
-
       <h1 class="text-8xl mb-4 text-white" style="font-family: 'Gyparody'">
         Big Picture Jeopardy!
       </h1>
 
-      <QuestionValuesTable
-        :categories="questions"
-        @select-question="selectQuestion"
-      />
+      <div class="space-y-8">
+        <QuestionValuesTable
+          :categories="questions"
+          @select-question="selectQuestion"
+        />
+
+        <div class="flex space-x-2 text-3xl">
+          <PlayerPointsSquare
+            v-for="(player, index) in allPlayers"
+            :key="index"
+            :player="player"
+          />
+        </div>
+      </div>
     </div>
+
+    <ModalPlayerRegistration
+      v-if="showRegistrationModal"
+      @save-players="savePlayers"
+    />
 
     <ModalAnswer
       v-if="selectedQuestionAnswer && showAnswerModal"
@@ -41,6 +51,7 @@ import QuestionValuesTable from "@/components/QuestionValuesTable.vue";
 import ModalQuestion from "@/components/ModalQuestion.vue";
 import ModalAnswer from "@/components/ModalAnswer.vue";
 import ModalPlayerRegistration from "@/components/ModalPlayerRegistration.vue";
+import PlayerPointsSquare from "@/components/PlayerPointsSquare.vue";
 
 type points = "200" | "400" | "800" | "1000";
 
@@ -49,7 +60,8 @@ type points = "200" | "400" | "800" | "1000";
     QuestionValuesTable,
     ModalQuestion,
     ModalAnswer,
-    ModalPlayerRegistration
+    ModalPlayerRegistration,
+    PlayerPointsSquare
   }
 })
 export default class Home extends Vue {
@@ -94,7 +106,7 @@ export default class Home extends Vue {
   }
 
   savePlayers(playersList: Array<Player>) {
-    this.allPlayers = playersList;
+    this.allPlayers = [...playersList];
     this.goHome();
   }
 
