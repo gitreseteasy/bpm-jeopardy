@@ -32,7 +32,7 @@
     <ModalAnswer
       v-if="selectedQuestionAnswer && showAnswerModal"
       :question-answer="selectedQuestionAnswer"
-      @set-answer="setAnswer"
+      @go-home="goHome"
       @set-steal-answer="setStealAnswer"
       :is-steal-mode="isStealMode"
       :selected-player="selectedPlayer"
@@ -45,6 +45,7 @@
       @show-answer="showAnswer"
       @set-answer="setAnswer"
       @set-steal-answer="setStealAnswer"
+      @pass-steal="passSteal"
       :is-steal-mode="isStealMode"
       :selected-player="selectedPlayer"
       :stealing-player="stealingPlayer"
@@ -190,9 +191,7 @@ export default class Home extends Vue {
 
     this.incrementStealingPlayer();
 
-    if (this.currentStealingPlayer === this.currentPlayer) {
-      this.unsetStealingMode();
-    }
+    this.checkEndOfStealing();
   }
 
   unsetStealingMode() {
@@ -200,17 +199,29 @@ export default class Home extends Vue {
     this.goHome();
   }
 
+  passSteal() {
+    this.incrementStealingPlayer();
+    this.checkEndOfStealing();
+  }
+
+  checkEndOfStealing() {
+    if (this.currentStealingPlayer === this.currentPlayer) {
+      this.unsetStealingMode();
+    }
+  }
+
   setAnswer(answer: string): void {
     const pointsValue = this.pointsValue;
 
+    const targetPlayerIndex = this.isStealMode
+      ? this.currentStealingPlayer
+      : this.currentPlayer;
+
     if (answer === "correct") {
-      this.allPlayers[this.currentPlayer].points += pointsValue;
+      this.allPlayers[targetPlayerIndex].points += pointsValue;
       this.incrementPlayer();
-      this.goHome();
+      this.showAnswer();
     } else {
-      const targetPlayerIndex = this.isStealMode
-        ? this.currentStealingPlayer
-        : this.currentPlayer;
       this.allPlayers[targetPlayerIndex].points -= pointsValue;
 
       if (!this.isStealMode) {
@@ -220,9 +231,7 @@ export default class Home extends Vue {
         this.incrementStealingPlayer();
       }
 
-      if (this.currentStealingPlayer === this.currentPlayer) {
-        this.unsetStealingMode();
-      }
+      this.checkEndOfStealing();
     }
   }
 }

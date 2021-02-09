@@ -10,18 +10,9 @@
         {{ questionAnswer.answer }}
       </div>
 
-      <div class="w-1/2 flex justify-between">
-        <button
-          class="text-3xl text-white underline"
-          @click="$emit('set-answer', 'correct')"
-        >
-          CORRECT
-        </button>
-        <button
-          class="text-3xl text-white underline"
-          @click="$emit('set-answer', 'wrong')"
-        >
-          WRONG
+      <div class="w-1/2 flex justify-center">
+        <button class="text-3xl text-white underline" @click="$emit('go-home')">
+          Go Home
         </button>
       </div>
     </div>

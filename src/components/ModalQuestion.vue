@@ -7,6 +7,16 @@
         {{ questionAnswer.question }}
       </div>
 
+      <div class="w-1/2 flex justify-center">
+        <button
+          v-if="isStealMode"
+          class="text-3xl text-white underline"
+          @click="$emit('pass-steal')"
+        >
+          PASS
+        </button>
+      </div>
+
       <div class="w-1/2 flex justify-between">
         <button
           class="text-3xl text-white underline"
@@ -29,7 +39,10 @@
         Show answer
       </button>
 
-      <div>
+      <div
+        class="flex flex-col items-center text-2xl space-y-2 text-white font-semibold"
+      >
+        <div v-if="isStealMode">Stealing:</div>
         <PlayerPointsSquare :player="displayedPlayer" />
       </div>
     </div>
@@ -62,7 +75,7 @@ import PlayerPointsSquare from "@/components/PlayerPointsSquare.vue";
       required: true
     }
   },
-  emits: ["show-answer", "set-answer"]
+  emits: ["show-answer", "set-answer", "pass-steal"]
 })
 export default class ModalQuestion extends Vue {
   questionAnswer!: QuestionAnswer;
