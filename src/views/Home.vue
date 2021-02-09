@@ -33,18 +33,26 @@
       v-if="selectedQuestionAnswer && showAnswerModal"
       :question-answer="selectedQuestionAnswer"
       @set-answer="setAnswer"
+      @set-steal-answer="setStealAnswer"
+      :is-steal-mode="isStealMode"
+      :selected-player="selectedPlayer"
+      :stealing-player="stealingPlayer"
     />
 
     <ModalQuestion
       v-if="selectedQuestionAnswer && showQuestionModal"
       :question-answer="selectedQuestionAnswer"
       @show-answer="showAnswer"
+      @set-answer="setAnswer"
+      @set-steal-answer="setStealAnswer"
+      :is-steal-mode="isStealMode"
+      :selected-player="selectedPlayer"
+      :stealing-player="stealingPlayer"
     />
   </div>
 </template>
 
 <script lang="ts">
-// https://www.soundboard.com/sb/price_is_right
 import { Options, Vue } from "vue-class-component";
 import questions from "../../questions/questions.json";
 import { Player, QuestionAnswer, QuestionCategory } from "@/models";
@@ -74,7 +82,31 @@ export default class Home extends Vue {
   selectedPointsValue: points | null = null;
   allPlayers: Array<Player> = [];
   currentPlayer = 0;
+
+  isDoubleJeopardyMode = false;
+  isStealMode = false;
+  currentStealingPlayer = 0;
   isDoubleJeopardy = false;
+
+  created() {
+    this.questions = questions;
+  }
+
+  get pointsValue() {
+    let points = Number(this.selectedPointsValue);
+    if (this.isDoubleJeopardyMode) {
+      points *= 2;
+    }
+    return points;
+  }
+
+  get stealingPlayer(): Player {
+    return this.allPlayers[this.currentStealingPlayer];
+  }
+
+  get selectedPlayer(): Player {
+    return this.allPlayers[this.currentPlayer];
+  }
 
   get selectedQuestionAnswer(): QuestionAnswer | null {
     if (!this.selectedCategory || !this.selectedPointsValue) {
@@ -82,10 +114,6 @@ export default class Home extends Vue {
     }
 
     return this.questions[this.selectedCategory][this.selectedPointsValue];
-  }
-
-  created() {
-    this.questions = questions;
   }
 
   selectQuestion(category: string, pointsValue: points): void {
@@ -120,6 +148,7 @@ export default class Home extends Vue {
     this.showAnswerModal = false;
     this.selectedCategory = null;
     this.selectedPointsValue = null;
+    this.isStealMode = false;
   }
 
   incrementPlayer() {
@@ -130,23 +159,71 @@ export default class Home extends Vue {
     }
   }
 
+  incrementStealingPlayer() {
+    const totalPlayers = this.allPlayers.length;
+    this.currentStealingPlayer++;
+    if (this.currentStealingPlayer >= totalPlayers) {
+      this.currentStealingPlayer = 0;
+    }
+  }
+
   setDoubleJeopardy(isDoubleJeopardy: boolean) {
     this.isDoubleJeopardy = isDoubleJeopardy;
   }
 
-  setAnswer(answer: string) {
-    let pointsValue = Number(this.selectedPointsValue);
-    if (this.isDoubleJeopardy) {
-      pointsValue *= 2;
+  setCurrentStealingPlayer() {
+    const totalPlayers = this.allPlayers.length;
+    this.currentStealingPlayer = this.currentPlayer + 1;
+    if (this.currentStealingPlayer >= totalPlayers) {
+      this.currentStealingPlayer = 0;
     }
+  }
+
+  setStealAnswer(answer: string) {
+    const pointsValue = this.pointsValue;
+
+    if (answer === "correct") {
+      this.allPlayers[this.currentStealingPlayer].points += pointsValue;
+    } else {
+      this.allPlayers[this.currentStealingPlayer].points -= pointsValue;
+    }
+
+    this.incrementStealingPlayer();
+
+    if (this.currentStealingPlayer === this.currentPlayer) {
+      this.unsetStealingMode();
+    }
+  }
+
+  unsetStealingMode() {
+    this.incrementPlayer();
+    this.goHome();
+  }
+
+  setAnswer(answer: string): void {
+    const pointsValue = this.pointsValue;
 
     if (answer === "correct") {
       this.allPlayers[this.currentPlayer].points += pointsValue;
+      this.incrementPlayer();
+      this.goHome();
     } else {
-      this.allPlayers[this.currentPlayer].points -= pointsValue;
+      const targetPlayerIndex = this.isStealMode
+        ? this.currentStealingPlayer
+        : this.currentPlayer;
+      this.allPlayers[targetPlayerIndex].points -= pointsValue;
+
+      if (!this.isStealMode) {
+        this.isStealMode = true;
+        this.setCurrentStealingPlayer();
+      } else {
+        this.incrementStealingPlayer();
+      }
+
+      if (this.currentStealingPlayer === this.currentPlayer) {
+        this.unsetStealingMode();
+      }
     }
-    this.incrementPlayer();
-    this.goHome();
   }
 }
 </script>
