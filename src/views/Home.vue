@@ -18,6 +18,7 @@
             v-for="(player, index) in allPlayers"
             :key="index"
             :player="player"
+            :highlighted="currentPlayer === index"
           />
         </div>
       </div>
@@ -73,6 +74,7 @@ export default class Home extends Vue {
   selectedPointsValue: points | null = null;
   allPlayers: Array<Player> = [];
   currentPlayer = 0;
+  isDoubleJeopardy = false;
 
   get selectedQuestionAnswer(): QuestionAnswer | null {
     if (!this.selectedCategory || !this.selectedPointsValue) {
@@ -120,14 +122,30 @@ export default class Home extends Vue {
     this.selectedPointsValue = null;
   }
 
+  incrementPlayer() {
+    const totalPlayers = this.allPlayers.length;
+    this.currentPlayer++;
+    if (this.currentPlayer >= totalPlayers) {
+      this.currentPlayer = 0;
+    }
+  }
+
+  setDoubleJeopardy(isDoubleJeopardy: boolean) {
+    this.isDoubleJeopardy = isDoubleJeopardy;
+  }
+
   setAnswer(answer: string) {
-    const pointsValue = Number(this.selectedPointsValue);
+    let pointsValue = Number(this.selectedPointsValue);
+    if (this.isDoubleJeopardy) {
+      pointsValue *= 2;
+    }
+
     if (answer === "correct") {
       this.allPlayers[this.currentPlayer].points += pointsValue;
     } else {
       this.allPlayers[this.currentPlayer].points -= pointsValue;
     }
-    // this.incrementPlayer
+    this.incrementPlayer();
     this.goHome();
   }
 }
